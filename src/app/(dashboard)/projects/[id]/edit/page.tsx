@@ -131,16 +131,24 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
         .map((tech) => tech.trim())
         .filter((tech) => tech.length > 0);
 
-      await updateProject(params.id, {
+      const updateData: any = {
         title: data.title,
         description: data.description,
         longDescription: data.longDescription,
         category: data.category,
         technologies,
-        liveUrl: data.liveUrl || undefined,
-        githubUrl: data.githubUrl || undefined,
         featured: data.featured,
-      });
+      };
+
+      // Only add optional fields if they have values (Firestore doesn't accept undefined)
+      if (data.liveUrl && data.liveUrl.trim() !== "") {
+        updateData.liveUrl = data.liveUrl;
+      }
+      if (data.githubUrl && data.githubUrl.trim() !== "") {
+        updateData.githubUrl = data.githubUrl;
+      }
+
+      await updateProject(params.id, updateData);
 
       toast.success("Project updated successfully!");
       router.push("/projects");

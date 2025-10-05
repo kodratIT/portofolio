@@ -92,19 +92,25 @@ export default function NewProjectPage() {
 
       console.log("Technologies array:", technologies);
 
-      const projectData = {
+      const projectData: any = {
         title: data.title,
         description: data.description,
         longDescription: data.longDescription,
         category: data.category,
         technologies,
-        liveUrl: data.liveUrl || undefined,
-        githubUrl: data.githubUrl || undefined,
         featured: data.featured,
         images: [],
         thumbnail: "",
         order: 0,
       };
+
+      // Only add optional fields if they have values (Firestore doesn't accept undefined)
+      if (data.liveUrl && data.liveUrl.trim() !== "") {
+        projectData.liveUrl = data.liveUrl;
+      }
+      if (data.githubUrl && data.githubUrl.trim() !== "") {
+        projectData.githubUrl = data.githubUrl;
+      }
 
       console.log("Project data to create:", projectData);
 

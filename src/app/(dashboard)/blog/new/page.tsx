@@ -75,17 +75,17 @@ export default function NewBlogPostPage() {
     },
   });
 
-  // Auto-generate slug from title
+  // Auto-generate slug from title in real-time
   const title = form.watch("title");
+  const [manuallyEditedSlug, setManuallyEditedSlug] = useState(false);
   
   useEffect(() => {
-    // Only auto-generate if slug is empty or was auto-generated before
-    const currentSlug = form.getValues("slug");
-    if (title && (!currentSlug || currentSlug === generateSlug(form.getValues("title")))) {
+    // Only auto-generate if user hasn't manually edited the slug
+    if (title && !manuallyEditedSlug) {
       const autoSlug = generateSlug(title);
       form.setValue("slug", autoSlug, { shouldValidate: false });
     }
-  }, [title, form]);
+  }, [title, manuallyEditedSlug, form]);
 
   const onSubmit = async (data: BlogFormValues) => {
     if (!user) {

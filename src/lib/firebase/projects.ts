@@ -55,10 +55,13 @@ export const createProject = async (
 
 export const getProjects = async (userId: string): Promise<Project[]> => {
   try {
+    // Temporarily remove orderBy to avoid index requirement
+    // TODO: Create Firestore index and re-enable orderBy
+    // Index URL: https://console.firebase.google.com/v1/r/project/portofolio-ecd0d/firestore/indexes?create_composite=ClFwcm9qZWN0cy9wb3J0b2ZvbGlvLWVjZDBkL2RhdGFiYXNlcy8oZGVmYXVsdCkvY29sbGVjdGlvbkdyb3Vwcy9wcm9qZWN0cy9pbmRleGVzL18QARoKCgZ1c2VySWQQARoJCgVvcmRlchABGgwKCF9fbmFtZV9fEAE
     const q = query(
       collection(db, PROJECTS_COLLECTION),
-      where("userId", "==", userId),
-      orderBy("order", "asc")
+      where("userId", "==", userId)
+      // orderBy("order", "asc") // Disabled until index is created
     );
     const querySnapshot = await getDocs(q);
     const projects: Project[] = [];
@@ -69,6 +72,9 @@ export const getProjects = async (userId: string): Promise<Project[]> => {
         ...doc.data(),
       } as Project);
     });
+    
+    // Sort in-memory by order field (temporary until Firestore index is created)
+    projects.sort((a, b) => a.order - b.order);
     
     console.log(`✅ Fetched ${projects.length} projects`);
     return projects;

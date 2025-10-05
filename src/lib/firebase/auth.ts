@@ -29,14 +29,27 @@ export const registerUser = async (
   password: string,
   displayName: string
 ): Promise<User> => {
-  const userCredential = await createUserWithEmailAndPassword(
-    auth,
-    email,
-    password
-  );
-  const user = userCredential.user;
+  let user: User;
+  
+  try {
+    const userCredential = await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+    user = userCredential.user;
+    console.log("✅ User created in Firebase Auth:", user.uid);
+  } catch (error: any) {
+    console.error("❌ Firebase Auth Error:", error.code, error.message);
+    throw error;
+  }
 
-  await updateProfile(user, { displayName });
+  try {
+    await updateProfile(user, { displayName });
+    console.log("✅ User profile updated");
+  } catch (error: any) {
+    console.error("⚠️ Profile update error:", error.message);
+  }
 
   const userProfile: UserProfile = {
     uid: user.uid,
@@ -53,7 +66,21 @@ export const registerUser = async (
     updatedAt: new Date(),
   };
 
-  await setDoc(doc(db, "users", user.uid), userProfile);
+  try {
+    await setDoc(doc(db, "users", user.uid), userProfile);
+    console.log("✅ User profile created in Firestore");
+  } catch (error: any) {
+    console.error("❌ Firestore Error:", error.code, error.message);
+    console.error("Full error:", error);
+    
+    if (error.code === "permission-denied") {
+      throw new Error("FIRESTORE_PERMISSION_DENIED: Please check Firestore rules");
+    } else if (error.code === "unavailable") {
+      throw new Error("FIRESTORE_UNAVAILABLE: Please enable Firestore Database");
+    } else {
+      throw new Error(`FIRESTORE_ERROR: ${error.message}`);
+    }
+  }
 
   return user;
 };

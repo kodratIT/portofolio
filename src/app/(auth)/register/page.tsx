@@ -56,6 +56,7 @@ export default function RegisterPage() {
   const onSubmit = async (data: RegisterFormValues) => {
     try {
       setIsLoading(true);
+      console.log("Starting registration...");
       await registerUser(data.email, data.password, data.displayName);
       toast.success("Registrasi berhasil! Selamat datang!");
       router.push("/dashboard");
@@ -69,9 +70,17 @@ export default function RegisterPage() {
         errorMessage = "Email tidak valid.";
       } else if (error.code === "auth/weak-password") {
         errorMessage = "Password terlalu lemah.";
+      } else if (error.message?.includes("FIRESTORE_PERMISSION_DENIED")) {
+        errorMessage = "⚠️ User created but Firestore access denied. Please enable Firestore rules.";
+        console.error("🔥 FIRESTORE NOT CONFIGURED! Check: https://console.firebase.google.com/project/portofolio-ecd0d/firestore");
+      } else if (error.message?.includes("FIRESTORE_UNAVAILABLE")) {
+        errorMessage = "⚠️ User created but Firestore is not enabled. Please enable Firestore Database.";
+        console.error("🔥 FIRESTORE NOT ENABLED! Enable at: https://console.firebase.google.com/project/portofolio-ecd0d/firestore");
+      } else if (error.message?.includes("FIRESTORE_ERROR")) {
+        errorMessage = `⚠️ User created but profile save failed: ${error.message}`;
       }
       
-      toast.error(errorMessage);
+      toast.error(errorMessage, { duration: 5000 });
     } finally {
       setIsLoading(false);
     }

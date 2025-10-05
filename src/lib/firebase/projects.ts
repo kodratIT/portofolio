@@ -21,16 +21,34 @@ export const createProject = async (
   projectData: Omit<Project, "id" | "userId" | "createdAt" | "updatedAt">
 ): Promise<string> => {
   try {
-    const docRef = await addDoc(collection(db, PROJECTS_COLLECTION), {
+    console.log("🔄 Creating project with data:", { userId, projectData });
+    
+    const dataToSave = {
       ...projectData,
       userId,
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now(),
-    });
-    console.log("✅ Project created:", docRef.id);
+    };
+    
+    console.log("📝 Data to save:", dataToSave);
+    
+    const docRef = await addDoc(collection(db, PROJECTS_COLLECTION), dataToSave);
+    
+    console.log("✅ Project created successfully:", docRef.id);
     return docRef.id;
   } catch (error: any) {
     console.error("❌ Error creating project:", error);
+    console.error("Error code:", error.code);
+    console.error("Error message:", error.message);
+    
+    if (error.code === "permission-denied") {
+      throw new Error("FIRESTORE_PERMISSION_DENIED: Cannot create project. Please check Firestore rules.");
+    } else if (error.code === "unavailable") {
+      throw new Error("FIRESTORE_UNAVAILABLE: Firestore is not available. Please check your connection.");
+    } else if (error.message?.includes("Missing or insufficient permissions")) {
+      throw new Error("FIRESTORE_PERMISSION: Missing permissions to create project. Enable Firestore rules.");
+    }
+    
     throw error;
   }
 };

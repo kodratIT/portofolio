@@ -81,13 +81,18 @@ export default function NewProjectPage() {
 
     try {
       setIsSubmitting(true);
+      console.log("🚀 Starting project creation...");
+      console.log("User ID:", user.uid);
+      console.log("Form data:", data);
       
       const technologies = data.technologies
         .split(",")
         .map((tech) => tech.trim())
         .filter((tech) => tech.length > 0);
 
-      await createProject(user.uid, {
+      console.log("Technologies array:", technologies);
+
+      const projectData = {
         title: data.title,
         description: data.description,
         longDescription: data.longDescription,
@@ -99,13 +104,34 @@ export default function NewProjectPage() {
         images: [],
         thumbnail: "",
         order: 0,
-      });
+      };
 
+      console.log("Project data to create:", projectData);
+
+      const projectId = await createProject(user.uid, projectData);
+      
+      console.log("✅ Project created with ID:", projectId);
       toast.success("Project created successfully!");
       router.push("/projects");
     } catch (error: any) {
-      console.error("Error creating project:", error);
-      toast.error("Failed to create project. Please try again.");
+      console.error("❌ Error creating project:", error);
+      console.error("Full error object:", JSON.stringify(error, null, 2));
+      
+      let errorMessage = "Failed to create project. Please try again.";
+      
+      if (error.message?.includes("FIRESTORE_PERMISSION")) {
+        errorMessage = "⚠️ Firestore permission denied. Please enable Firestore rules.";
+        console.error("🔥 FIRESTORE RULES ERROR!");
+        console.error("Fix at: https://console.firebase.google.com/project/portofolio-ecd0d/firestore/rules");
+      } else if (error.message?.includes("FIRESTORE_UNAVAILABLE")) {
+        errorMessage = "⚠️ Firestore is not available. Please check your connection.";
+        console.error("🔥 FIRESTORE NOT AVAILABLE!");
+      } else if (error.code === "permission-denied") {
+        errorMessage = "⚠️ Permission denied. Please check Firestore security rules.";
+        console.error("🔥 PERMISSION DENIED - Check Firestore rules!");
+      }
+      
+      toast.error(errorMessage, { duration: 5000 });
     } finally {
       setIsSubmitting(false);
     }

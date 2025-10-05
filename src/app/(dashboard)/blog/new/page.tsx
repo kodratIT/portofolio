@@ -175,11 +175,15 @@ export default function NewBlogPostPage() {
                       <Input
                         placeholder="my-awesome-blog-post"
                         {...field}
+                        onChange={(e) => {
+                          field.onChange(e);
+                          setManuallyEditedSlug(true);
+                        }}
                         disabled={isSubmitting}
                       />
                     </FormControl>
                     <FormDescription>
-                      Leave empty to auto-generate from title
+                      Auto-generated from title (editable)
                     </FormDescription>
                     <FormMessage />
                   </FormItem>

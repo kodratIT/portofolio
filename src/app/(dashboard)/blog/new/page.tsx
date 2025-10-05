@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useForm } from "react-hook-form";
@@ -74,6 +74,18 @@ export default function NewBlogPostPage() {
       featured: false,
     },
   });
+
+  // Auto-generate slug from title
+  const title = form.watch("title");
+  
+  useEffect(() => {
+    // Only auto-generate if slug is empty or was auto-generated before
+    const currentSlug = form.getValues("slug");
+    if (title && (!currentSlug || currentSlug === generateSlug(form.getValues("title")))) {
+      const autoSlug = generateSlug(title);
+      form.setValue("slug", autoSlug, { shouldValidate: false });
+    }
+  }, [title, form]);
 
   const onSubmit = async (data: BlogFormValues) => {
     if (!user) {

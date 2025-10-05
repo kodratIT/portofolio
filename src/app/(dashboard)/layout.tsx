@@ -12,6 +12,7 @@ import {
   Settings,
   LogOut,
   Menu,
+  FileText,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -33,6 +34,7 @@ import { useState } from "react";
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { name: "Projects", href: "/projects", icon: FolderKanban },
+  { name: "Blog", href: "/blog", icon: FileText },
   { name: "Skills", href: "/skills", icon: Code2 },
   { name: "Experience", href: "/experience", icon: Briefcase },
   { name: "Settings", href: "/settings", icon: Settings },

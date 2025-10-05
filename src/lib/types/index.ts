@@ -51,14 +51,14 @@ export interface Experience {
   company: string;
   position: string;
   description: string;
-  startDate: Timestamp | Date;
-  endDate?: Timestamp | Date;
+  responsibilities: string[];
+  startDate?: Timestamp;
+  endDate?: Timestamp;
   current: boolean;
-  location: string;
-  technologies: string[];
+  location?: string;
   order: number;
-  createdAt: Timestamp | Date;
-  updatedAt: Timestamp | Date;
+  createdAt?: Timestamp;
+  updatedAt?: Timestamp;
 }
 
 export type SkillCategory =
@@ -76,3 +76,24 @@ export type ProjectCategory =
   | "API/Backend"
   | "Library/Package"
   | "Other";
+
+export type BlogCategory = "Technology" | "Tutorial" | "Personal" | "Review" | "News" | "Other";
+
+export interface BlogPost {
+  id?: string;
+  userId: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  content: string;
+  coverImage?: string;
+  category: BlogCategory;
+  tags: string[];
+  published: boolean;
+  publishedAt?: Timestamp;
+  featured: boolean;
+  viewCount: number;
+  order: number;
+  createdAt?: Timestamp;
+  updatedAt?: Timestamp;
+}

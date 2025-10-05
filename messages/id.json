@@ -1,0 +1,63 @@
+{
+  "dashboard": {
+    "welcome": "Selamat datang kembali",
+    "subtitle": "Ini yang terjadi dengan portfolio Anda hari ini.",
+    "stats": {
+      "projects": "Proyek",
+      "featured": "unggulan",
+      "blogPosts": "Artikel Blog",
+      "published": "dipublikasikan",
+      "skills": "Keahlian",
+      "technicalSkills": "Keahlian teknis",
+      "experience": "Pengalaman",
+      "workHistory": "Riwayat pekerjaan"
+    },
+    "quickActions": {
+      "title": "Aksi Cepat",
+      "description": "Buat konten baru untuk portfolio Anda",
+      "newProject": "Proyek Baru",
+      "newBlogPost": "Artikel Baru",
+      "addSkill": "Tambah Keahlian",
+      "addExperience": "Tambah Pengalaman"
+    },
+    "recentProjects": {
+      "title": "Proyek Terbaru",
+      "viewAll": "Lihat semua",
+      "noProjects": "Belum ada proyek",
+      "createFirst": "Buat proyek pertama Anda"
+    },
+    "recentBlogPosts": {
+      "title": "Artikel Terbaru",
+      "viewAll": "Lihat semua",
+      "noPosts": "Belum ada artikel",
+      "writeFirst": "Tulis artikel pertama Anda",
+      "published": "Dipublikasikan",
+      "draft": "Draf"
+    },
+    "profileCompletion": {
+      "title": "Kelengkapan Profil",
+      "description": "Lengkapi portfolio Anda agar lebih menarik",
+      "addProject": "Tambahkan minimal satu proyek",
+      "addSkills": "Tambahkan keahlian Anda",
+      "addExperience": "Tambahkan pengalaman kerja",
+      "completeProfile": "Lengkapi profil Anda",
+      "add": "Tambah",
+      "complete": "Lengkapi"
+    }
+  },
+  "navigation": {
+    "dashboard": "Dasbor",
+    "projects": "Proyek",
+    "blog": "Blog",
+    "skills": "Keahlian",
+    "experience": "Pengalaman",
+    "settings": "Pengaturan",
+    "logout": "Keluar"
+  },
+  "common": {
+    "loading": "Memuat...",
+    "loggingOut": "Keluar...",
+    "logoutSuccess": "Logout berhasil",
+    "logoutFailed": "Logout gagal"
+  }
+}

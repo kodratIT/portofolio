@@ -52,6 +52,7 @@ export interface Experience {
   position: string;
   description: string;
   responsibilities: string[];
+  companyLogo?: string;
   startDate?: Timestamp;
   endDate?: Timestamp;
   current: boolean;

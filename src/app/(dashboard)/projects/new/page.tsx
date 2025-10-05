@@ -31,6 +31,7 @@ import {
 } from "@/components/ui/select";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import { ImageUpload, MultipleImageUpload } from "@/components/common/ImageUpload";
 
 const projectSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters"),
@@ -58,6 +59,8 @@ export default function NewProjectPage() {
   const router = useRouter();
   const { user } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [thumbnail, setThumbnail] = useState<string>("");
+  const [images, setImages] = useState<string[]>([]);
 
   const form = useForm<ProjectFormValues>({
     resolver: zodResolver(projectSchema),
@@ -99,8 +102,8 @@ export default function NewProjectPage() {
         category: data.category,
         technologies,
         featured: data.featured,
-        images: [],
-        thumbnail: "",
+        images: images,
+        thumbnail: thumbnail,
         order: 0,
       };
 
@@ -320,6 +323,36 @@ export default function NewProjectPage() {
                     </FormItem>
                   )}
                 />
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-lg font-semibold mb-2">Thumbnail Image</h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Upload a thumbnail image for your project
+                  </p>
+                  <ImageUpload
+                    onUpload={(url) => setThumbnail(url)}
+                    onRemove={() => setThumbnail("")}
+                    currentImage={thumbnail}
+                    folder="projects/thumbnails"
+                    label="Upload Thumbnail"
+                  />
+                </div>
+
+                <div>
+                  <h3 className="text-lg font-semibold mb-2">Project Images</h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Upload screenshots or images of your project (max 5)
+                  </p>
+                  <MultipleImageUpload
+                    onUpload={(urls) => setImages(urls)}
+                    currentImages={images}
+                    folder="projects/images"
+                    label="Upload Images"
+                    maxImages={5}
+                  />
+                </div>
               </div>
 
               <div className="flex gap-4">

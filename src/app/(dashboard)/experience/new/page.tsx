@@ -30,6 +30,7 @@ import {
 } from "@/components/ui/popover";
 import { ArrowLeft, CalendarIcon } from "lucide-react";
 import Link from "next/link";
+import { ImageUpload } from "@/components/common/ImageUpload";
 import { format } from "date-fns";
 import { Timestamp } from "firebase/firestore";
 import { cn } from "@/lib/utils";
@@ -53,6 +54,7 @@ export default function NewExperiencePage() {
   const router = useRouter();
   const { user } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [companyLogo, setCompanyLogo] = useState<string>("");
 
   const form = useForm<ExperienceFormValues>({
     resolver: zodResolver(experienceSchema),
@@ -89,6 +91,7 @@ export default function NewExperiencePage() {
         current: data.current,
         description: data.description,
         responsibilities,
+        companyLogo: companyLogo || undefined,
         order: 0,
       };
 
@@ -170,6 +173,20 @@ export default function NewExperiencePage() {
                       <FormMessage />
                     </FormItem>
                   )}
+                />
+              </div>
+
+              <div>
+                <h3 className="text-lg font-semibold mb-2">Company Logo</h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Upload company logo (optional)
+                </p>
+                <ImageUpload
+                  onUpload={(url) => setCompanyLogo(url)}
+                  onRemove={() => setCompanyLogo("")}
+                  currentImage={companyLogo}
+                  folder="experience/logos"
+                  label="Upload Company Logo"
                 />
               </div>
 

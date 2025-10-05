@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useForm } from "react-hook-form";
@@ -50,7 +50,8 @@ const experienceSchema = z.object({
 
 type ExperienceFormValues = z.infer<typeof experienceSchema>;
 
-export default function EditExperiencePage({ params }: { params: { id: string } }) {
+export default function EditExperiencePage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
   const router = useRouter();
   const { user } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -75,7 +76,7 @@ export default function EditExperiencePage({ params }: { params: { id: string } 
     const loadExperience = async () => {
       try {
         setIsLoading(true);
-        const data = await getExperience(params.id);
+        const data = await getExperience(id);
         
         if (!data) {
           toast.error("Experience not found");
@@ -111,7 +112,7 @@ export default function EditExperiencePage({ params }: { params: { id: string } 
     if (user) {
       loadExperience();
     }
-  }, [params.id, user, router, form]);
+  }, [id, user, router, form]);
 
   const onSubmit = async (data: ExperienceFormValues) => {
     if (!user || !experience) {
@@ -144,7 +145,7 @@ export default function EditExperiencePage({ params }: { params: { id: string } 
         updateData.endDate = Timestamp.fromDate(data.endDate);
       }
 
-      await updateExperience(params.id, updateData);
+      await updateExperience(id, updateData);
 
       toast.success("Experience updated successfully!");
       router.push("/experience");

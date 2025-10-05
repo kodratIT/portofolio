@@ -24,9 +24,11 @@ import {
   FolderKanban
 } from "lucide-react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 export default function DashboardPage() {
   const { user, userProfile } = useAuth();
+  const t = useTranslations("dashboard");
   const [stats, setStats] = useState({
     projects: 0,
     skills: 0,
@@ -79,36 +81,36 @@ export default function DashboardPage() {
 
   const statCards = [
     {
-      title: "Projects",
+      title: t("stats.projects"),
       value: stats.projects,
-      description: `${stats.featuredProjects} featured`,
+      description: `${stats.featuredProjects} ${t("stats.featured")}`,
       icon: Briefcase,
       href: "/projects",
       color: "text-blue-600",
       bgColor: "bg-blue-50 dark:bg-blue-950",
     },
     {
-      title: "Blog Posts",
+      title: t("stats.blogPosts"),
       value: stats.blogPosts,
-      description: `${stats.publishedPosts} published`,
+      description: `${stats.publishedPosts} ${t("stats.published")}`,
       icon: FileText,
       href: "/blog",
       color: "text-green-600",
       bgColor: "bg-green-50 dark:bg-green-950",
     },
     {
-      title: "Skills",
+      title: t("stats.skills"),
       value: stats.skills,
-      description: "Technical skills",
+      description: t("stats.technicalSkills"),
       icon: Code2,
       href: "/skills",
       color: "text-purple-600",
       bgColor: "bg-purple-50 dark:bg-purple-950",
     },
     {
-      title: "Experience",
+      title: t("stats.experience"),
       value: stats.experiences,
-      description: "Work history",
+      description: t("stats.workHistory"),
       icon: GraduationCap,
       href: "/experience",
       color: "text-orange-600",
@@ -117,10 +119,10 @@ export default function DashboardPage() {
   ];
 
   const quickActions = [
-    { label: "New Project", href: "/projects/new", icon: Briefcase },
-    { label: "New Blog Post", href: "/blog/new", icon: FileText },
-    { label: "Add Skill", href: "/skills/new", icon: Code2 },
-    { label: "Add Experience", href: "/experience/new", icon: GraduationCap },
+    { label: t("quickActions.newProject"), href: "/projects/new", icon: Briefcase },
+    { label: t("quickActions.newBlogPost"), href: "/blog/new", icon: FileText },
+    { label: t("quickActions.addSkill"), href: "/skills/new", icon: Code2 },
+    { label: t("quickActions.addExperience"), href: "/experience/new", icon: GraduationCap },
   ];
 
   if (loading) {
@@ -135,9 +137,9 @@ export default function DashboardPage() {
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold">Welcome back, {userProfile?.displayName || "User"}! 👋</h1>
+        <h1 className="text-3xl font-bold">{t("welcome")}, {userProfile?.displayName || "User"}! 👋</h1>
         <p className="text-muted-foreground mt-2">
-          Here's what's happening with your portfolio today.
+          {t("subtitle")}
         </p>
       </div>
 
@@ -170,10 +172,10 @@ export default function DashboardPage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Activity className="h-5 w-5" />
-            Quick Actions
+            {t("quickActions.title")}
           </CardTitle>
           <CardDescription>
-            Create new content for your portfolio
+            {t("quickActions.description")}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -197,11 +199,11 @@ export default function DashboardPage() {
             <div className="flex items-center justify-between">
               <CardTitle className="flex items-center gap-2">
                 <Briefcase className="h-5 w-5" />
-                Recent Projects
+                {t("recentProjects.title")}
               </CardTitle>
               <Link href="/projects">
                 <Button variant="ghost" size="sm">
-                  View all
+                  {t("recentProjects.viewAll")}
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </Link>
@@ -211,10 +213,10 @@ export default function DashboardPage() {
             {recentProjects.length === 0 ? (
               <div className="text-center py-8 text-muted-foreground">
                 <Briefcase className="h-12 w-12 mx-auto mb-2 opacity-20" />
-                <p>No projects yet</p>
+                <p>{t("recentProjects.noProjects")}</p>
                 <Link href="/projects/new">
                   <Button variant="link" size="sm" className="mt-2">
-                    Create your first project
+                    {t("recentProjects.createFirst")}
                   </Button>
                 </Link>
               </div>
@@ -249,11 +251,11 @@ export default function DashboardPage() {
             <div className="flex items-center justify-between">
               <CardTitle className="flex items-center gap-2">
                 <FileText className="h-5 w-5" />
-                Recent Blog Posts
+                {t("recentBlogPosts.title")}
               </CardTitle>
               <Link href="/blog">
                 <Button variant="ghost" size="sm">
-                  View all
+                  {t("recentBlogPosts.viewAll")}
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </Link>
@@ -263,10 +265,10 @@ export default function DashboardPage() {
             {recentBlogPosts.length === 0 ? (
               <div className="text-center py-8 text-muted-foreground">
                 <FileText className="h-12 w-12 mx-auto mb-2 opacity-20" />
-                <p>No blog posts yet</p>
+                <p>{t("recentBlogPosts.noPosts")}</p>
                 <Link href="/blog/new">
                   <Button variant="link" size="sm" className="mt-2">
-                    Write your first post
+                    {t("recentBlogPosts.writeFirst")}
                   </Button>
                 </Link>
               </div>
@@ -286,7 +288,7 @@ export default function DashboardPage() {
                       </p>
                       <div className="flex items-center gap-2 mt-2">
                         <Badge variant={post.published ? "default" : "secondary"} className="text-xs">
-                          {post.published ? "Published" : "Draft"}
+                          {post.published ? t("recentBlogPosts.published") : t("recentBlogPosts.draft")}
                         </Badge>
                         <Badge variant="outline" className="text-xs">
                           {post.category}
@@ -306,10 +308,10 @@ export default function DashboardPage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <TrendingUp className="h-5 w-5" />
-            Profile Completion
+            {t("profileCompletion.title")}
           </CardTitle>
           <CardDescription>
-            Complete your portfolio to make it more attractive
+            {t("profileCompletion.description")}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -317,44 +319,44 @@ export default function DashboardPage() {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className={`h-2 w-2 rounded-full ${stats.projects > 0 ? 'bg-green-500' : 'bg-gray-300'}`} />
-                <span className="text-sm">Add at least one project</span>
+                <span className="text-sm">{t("profileCompletion.addProject")}</span>
               </div>
               {stats.projects === 0 && (
                 <Link href="/projects/new">
-                  <Button variant="outline" size="sm">Add</Button>
+                  <Button variant="outline" size="sm">{t("profileCompletion.add")}</Button>
                 </Link>
               )}
             </div>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className={`h-2 w-2 rounded-full ${stats.skills > 0 ? 'bg-green-500' : 'bg-gray-300'}`} />
-                <span className="text-sm">Add your skills</span>
+                <span className="text-sm">{t("profileCompletion.addSkills")}</span>
               </div>
               {stats.skills === 0 && (
                 <Link href="/skills/new">
-                  <Button variant="outline" size="sm">Add</Button>
+                  <Button variant="outline" size="sm">{t("profileCompletion.add")}</Button>
                 </Link>
               )}
             </div>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className={`h-2 w-2 rounded-full ${stats.experiences > 0 ? 'bg-green-500' : 'bg-gray-300'}`} />
-                <span className="text-sm">Add work experience</span>
+                <span className="text-sm">{t("profileCompletion.addExperience")}</span>
               </div>
               {stats.experiences === 0 && (
                 <Link href="/experience/new">
-                  <Button variant="outline" size="sm">Add</Button>
+                  <Button variant="outline" size="sm">{t("profileCompletion.add")}</Button>
                 </Link>
               )}
             </div>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className={`h-2 w-2 rounded-full ${userProfile?.bio ? 'bg-green-500' : 'bg-gray-300'}`} />
-                <span className="text-sm">Complete your profile</span>
+                <span className="text-sm">{t("profileCompletion.completeProfile")}</span>
               </div>
               {!userProfile?.bio && (
                 <Link href="/settings">
-                  <Button variant="outline" size="sm">Complete</Button>
+                  <Button variant="outline" size="sm">{t("profileCompletion.complete")}</Button>
                 </Link>
               )}
             </div>

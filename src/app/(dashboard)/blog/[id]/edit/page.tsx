@@ -1,14 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { toast } from "sonner";
-import { createBlogPost, generateSlug } from "@/lib/firebase/blog";
-import { BlogCategory } from "@/lib/types";
+import { getBlogPost, updateBlogPost, generateSlug } from "@/lib/firebase/blog";
+import { BlogCategory, BlogPost } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -57,10 +57,13 @@ const categories: BlogCategory[] = [
   "Other",
 ];
 
-export default function NewBlogPostPage() {
+export default function EditBlogPostPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
   const router = useRouter();
   const { user } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [blogPost, setBlogPost] = useState<BlogPost | null>(null);
   const [coverImage, setCoverImage] = useState<string>("");
 
   const form = useForm<BlogFormValues>({
@@ -77,12 +80,51 @@ export default function NewBlogPostPage() {
     },
   });
 
-  // Auto-generate slug from title in real-time
-  const title = form.watch("title");
   const [manuallyEditedSlug, setManuallyEditedSlug] = useState(false);
-  
+  const title = form.watch("title");
+
   useEffect(() => {
-    // Only auto-generate if user hasn't manually edited the slug
+    const loadBlogPost = async () => {
+      try {
+        setIsLoading(true);
+        const data = await getBlogPost(id);
+        
+        if (!data) {
+          toast.error("Blog post not found");
+          router.push("/blog");
+          return;
+        }
+
+        setBlogPost(data);
+        setCoverImage(data.coverImage || "");
+        
+        form.reset({
+          title: data.title,
+          slug: data.slug,
+          excerpt: data.excerpt,
+          content: data.content,
+          category: data.category,
+          tags: data.tags.join(", "),
+          published: data.published,
+          featured: data.featured,
+        });
+        
+        setManuallyEditedSlug(true);
+      } catch (error) {
+        console.error("Error loading blog post:", error);
+        toast.error("Failed to load blog post");
+        router.push("/blog");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (user) {
+      loadBlogPost();
+    }
+  }, [id, user, router, form]);
+
+  useEffect(() => {
     if (title && !manuallyEditedSlug) {
       const autoSlug = generateSlug(title);
       form.setValue("slug", autoSlug, { shouldValidate: false });
@@ -90,8 +132,8 @@ export default function NewBlogPostPage() {
   }, [title, manuallyEditedSlug, form]);
 
   const onSubmit = async (data: BlogFormValues) => {
-    if (!user) {
-      toast.error("You must be logged in to create a blog post");
+    if (!user || !blogPost) {
+      toast.error("You must be logged in to update a blog post");
       return;
     }
 
@@ -103,29 +145,44 @@ export default function NewBlogPostPage() {
         .map((tag) => tag.trim())
         .filter((tag) => tag.length > 0);
 
-      await createBlogPost(user.uid, {
+      const updateData: Partial<BlogPost> = {
         title: data.title,
         slug: data.slug || generateSlug(data.title),
         excerpt: data.excerpt,
         content: data.content,
-        coverImage: coverImage || undefined,
         category: data.category as BlogCategory,
         tags,
         published: data.published,
         featured: data.featured,
-        viewCount: 0,
-        order: 0,
-      });
+      };
 
-      toast.success("Blog post created successfully!");
+      if (coverImage) {
+        updateData.coverImage = coverImage;
+      }
+
+      await updateBlogPost(id, updateData);
+
+      toast.success("Blog post updated successfully!");
       router.push("/blog");
-    } catch (error: any) {
-      console.error("Error creating blog post:", error);
-      toast.error("Failed to create blog post. Please try again.");
+    } catch (error) {
+      console.error("Error updating blog post:", error);
+      toast.error("Failed to update blog post. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (!blogPost) {
+    return null;
+  }
 
   return (
     <div className="space-y-6">
@@ -136,9 +193,9 @@ export default function NewBlogPostPage() {
           </Button>
         </Link>
         <div>
-          <h1 className="text-3xl font-bold">New Blog Post</h1>
+          <h1 className="text-3xl font-bold">Edit Blog Post</h1>
           <p className="text-muted-foreground mt-2">
-            Create a new blog post
+            Update your blog post
           </p>
         </div>
       </div>
@@ -178,15 +235,38 @@ export default function NewBlogPostPage() {
                       <Input
                         placeholder="my-awesome-blog-post"
                         {...field}
+                        disabled={isSubmitting}
                         onChange={(e) => {
                           field.onChange(e);
                           setManuallyEditedSlug(true);
                         }}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      URL-friendly version of the title (auto-generated if left empty)
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="excerpt"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Excerpt *</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Brief description of your blog post..."
+                        className="resize-none"
+                        rows={3}
+                        {...field}
                         disabled={isSubmitting}
                       />
                     </FormControl>
                     <FormDescription>
-                      Auto-generated from title (editable)
+                      Short summary (20-200 characters)
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -231,41 +311,19 @@ export default function NewBlogPostPage() {
                       <FormLabel>Tags</FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="react, nextjs, typescript"
+                          placeholder="react, typescript, tutorial"
                           {...field}
                           disabled={isSubmitting}
                         />
                       </FormControl>
                       <FormDescription>
-                        Comma-separated tags
+                        Separate tags with commas
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
               </div>
-
-              <FormField
-                control={form.control}
-                name="excerpt"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Excerpt *</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="Brief description of your blog post..."
-                        className="min-h-[80px]"
-                        {...field}
-                        disabled={isSubmitting}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      Short summary (20-200 characters)
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
 
               <FormField
                 control={form.control}
@@ -277,7 +335,6 @@ export default function NewBlogPostPage() {
                       <RichTextEditor
                         value={field.value}
                         onChange={field.onChange}
-                        placeholder="Write your blog post content here..."
                         disabled={isSubmitting}
                       />
                     </FormControl>
@@ -355,7 +412,7 @@ export default function NewBlogPostPage() {
                   disabled={isSubmitting}
                   className="flex-1"
                 >
-                  {isSubmitting ? "Creating..." : "Create Post"}
+                  {isSubmitting ? "Updating..." : "Update Post"}
                 </Button>
                 <Link href="/blog" className="flex-1">
                   <Button

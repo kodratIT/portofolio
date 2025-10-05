@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useForm } from "react-hook-form";
@@ -49,7 +49,8 @@ const categories: SkillCategory[] = [
   "Other",
 ];
 
-export default function EditSkillPage({ params }: { params: { id: string } }) {
+export default function EditSkillPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
   const router = useRouter();
   const { user } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -71,7 +72,7 @@ export default function EditSkillPage({ params }: { params: { id: string } }) {
     const loadSkill = async () => {
       try {
         setIsLoading(true);
-        const data = await getSkill(params.id);
+        const data = await getSkill(id);
         
         if (!data) {
           toast.error("Skill not found");
@@ -102,7 +103,7 @@ export default function EditSkillPage({ params }: { params: { id: string } }) {
     if (user) {
       loadSkill();
     }
-  }, [params.id, user, router, form]);
+  }, [id, user, router, form]);
 
   const onSubmit = async (data: SkillFormValues) => {
     if (!user || !skill) {
@@ -113,7 +114,7 @@ export default function EditSkillPage({ params }: { params: { id: string } }) {
     try {
       setIsSubmitting(true);
       
-      await updateSkill(params.id, {
+      await updateSkill(id, {
         name: data.name,
         category: data.category,
         level: data.level,

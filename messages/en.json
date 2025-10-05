@@ -1,0 +1,63 @@
+{
+  "dashboard": {
+    "welcome": "Welcome back",
+    "subtitle": "Here's what's happening with your portfolio today.",
+    "stats": {
+      "projects": "Projects",
+      "featured": "featured",
+      "blogPosts": "Blog Posts",
+      "published": "published",
+      "skills": "Skills",
+      "technicalSkills": "Technical skills",
+      "experience": "Experience",
+      "workHistory": "Work history"
+    },
+    "quickActions": {
+      "title": "Quick Actions",
+      "description": "Create new content for your portfolio",
+      "newProject": "New Project",
+      "newBlogPost": "New Blog Post",
+      "addSkill": "Add Skill",
+      "addExperience": "Add Experience"
+    },
+    "recentProjects": {
+      "title": "Recent Projects",
+      "viewAll": "View all",
+      "noProjects": "No projects yet",
+      "createFirst": "Create your first project"
+    },
+    "recentBlogPosts": {
+      "title": "Recent Blog Posts",
+      "viewAll": "View all",
+      "noPosts": "No blog posts yet",
+      "writeFirst": "Write your first post",
+      "published": "Published",
+      "draft": "Draft"
+    },
+    "profileCompletion": {
+      "title": "Profile Completion",
+      "description": "Complete your portfolio to make it more attractive",
+      "addProject": "Add at least one project",
+      "addSkills": "Add your skills",
+      "addExperience": "Add work experience",
+      "completeProfile": "Complete your profile",
+      "add": "Add",
+      "complete": "Complete"
+    }
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "projects": "Projects",
+    "blog": "Blog",
+    "skills": "Skills",
+    "experience": "Experience",
+    "settings": "Settings",
+    "logout": "Logout"
+  },
+  "common": {
+    "loading": "Loading...",
+    "loggingOut": "Logging out...",
+    "logoutSuccess": "Logout successful",
+    "logoutFailed": "Logout failed"
+  }
+}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useForm } from "react-hook-form";
@@ -31,6 +31,7 @@ import {
 } from "@/components/ui/select";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import { ImageUpload, MultipleImageUpload } from "@/components/common/ImageUpload";
 
 const projectSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters"),
@@ -54,12 +55,15 @@ const categories: ProjectCategory[] = [
   "Other",
 ];
 
-export default function EditProjectPage({ params }: { params: { id: string } }) {
+export default function EditProjectPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
   const router = useRouter();
   const { user } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [project, setProject] = useState<Project | null>(null);
+  const [thumbnail, setThumbnail] = useState<string>("");
+  const [images, setImages] = useState<string[]>([]);
 
   const form = useForm<ProjectFormValues>({
     resolver: zodResolver(projectSchema),
@@ -79,7 +83,7 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
     const loadProject = async () => {
       try {
         setIsLoading(true);
-        const data = await getProject(params.id);
+        const data = await getProject(id);
         
         if (!data) {
           toast.error("Project not found");
@@ -115,7 +119,7 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
     if (user) {
       loadProject();
     }
-  }, [params.id, user, router, form]);
+  }, [id, user, router, form]);
 
   const onSubmit = async (data: ProjectFormValues) => {
     if (!user || !project) {
@@ -148,7 +152,7 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
         updateData.githubUrl = data.githubUrl;
       }
 
-      await updateProject(params.id, updateData);
+      await updateProject(id, updateData);
 
       toast.success("Project updated successfully!");
       router.push("/projects");

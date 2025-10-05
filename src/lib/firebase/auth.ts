@@ -5,6 +5,8 @@ import {
   sendPasswordResetEmail,
   updateProfile,
   User,
+  GoogleAuthProvider,
+  signInWithPopup,
 } from "firebase/auth";
 import { auth, db } from "./config";
 import { doc, setDoc, getDoc } from "firebase/firestore";
@@ -87,6 +89,52 @@ export const registerUser = async (
 
 export const loginUser = async (email: string, password: string) => {
   return await signInWithEmailAndPassword(auth, email, password);
+};
+
+export const loginWithGoogle = async (): Promise<User> => {
+  try {
+    const provider = new GoogleAuthProvider();
+    provider.setCustomParameters({
+      prompt: 'select_account'
+    });
+    
+    const result = await signInWithPopup(auth, provider);
+    const user = result.user;
+    
+    console.log("✅ Google Sign-In successful:", user.uid);
+    
+    // Check if user profile exists in Firestore
+    const userDoc = await getDoc(doc(db, "users", user.uid));
+    
+    if (!userDoc.exists()) {
+      // Create user profile if it doesn't exist
+      console.log("📝 Creating user profile for new Google user");
+      const userProfile: UserProfile = {
+        uid: user.uid,
+        email: user.email!,
+        displayName: user.displayName || user.email!.split('@')[0],
+        bio: "",
+        avatar: user.photoURL || "",
+        location: "",
+        website: "",
+        github: "",
+        linkedin: "",
+        twitter: "",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+      
+      await setDoc(doc(db, "users", user.uid), userProfile);
+      console.log("✅ User profile created for Google user");
+    } else {
+      console.log("✅ Existing user profile found");
+    }
+    
+    return user;
+  } catch (error: any) {
+    console.error("❌ Google Sign-In Error:", error.code, error.message);
+    throw error;
+  }
 };
 
 export const logoutUser = async () => {

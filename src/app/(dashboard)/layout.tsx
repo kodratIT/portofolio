@@ -2,7 +2,6 @@
 
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 import ProtectedRoute from "@/components/common/ProtectedRoute";
 import {
   LayoutDashboard,
@@ -30,24 +29,29 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { logoutUser } from "@/lib/firebase/auth";
 import { toast } from "sonner";
 import { useState } from "react";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { LanguageSwitcher } from "@/components/language-switcher";
+import { useTranslations } from "next-intl";
 
-const navigation = [
-  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-  { name: "Projects", href: "/projects", icon: FolderKanban },
-  { name: "Blog", href: "/blog", icon: FileText },
-  { name: "Skills", href: "/skills", icon: Code2 },
-  { name: "Experience", href: "/experience", icon: Briefcase },
-  { name: "Settings", href: "/settings", icon: Settings },
+const getNavigation = (t: ReturnType<typeof useTranslations>) => [
+  { name: t("navigation.dashboard"), href: "/dashboard", icon: LayoutDashboard },
+  { name: t("navigation.projects"), href: "/projects", icon: FolderKanban },
+  { name: t("navigation.blog"), href: "/blog", icon: FileText },
+  { name: t("navigation.skills"), href: "/skills", icon: Code2 },
+  { name: t("navigation.experience"), href: "/experience", icon: Briefcase },
+  { name: t("navigation.settings"), href: "/settings", icon: Settings },
 ];
 
 function Sidebar() {
   const pathname = usePathname();
+  const t = useTranslations();
+  const navigation = getNavigation(t);
 
   return (
     <div className="flex flex-col h-full bg-card border-r">
       <div className="p-6">
         <h2 className="text-2xl font-bold">Portfolio</h2>
-        <p className="text-sm text-muted-foreground">Dashboard</p>
+        <p className="text-sm text-muted-foreground">{t("navigation.dashboard")}</p>
       </div>
       <nav className="flex-1 space-y-1 px-3">
         {navigation.map((item) => {
@@ -76,16 +80,17 @@ function Header() {
   const { user, userProfile } = useAuth();
   const router = useRouter();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const t = useTranslations();
 
   const handleLogout = async () => {
     try {
       setIsLoggingOut(true);
       await logoutUser();
-      toast.success("Logout berhasil");
+      toast.success(t("common.logoutSuccess"));
       router.push("/login");
     } catch (error) {
       console.error("Logout error:", error);
-      toast.error("Logout gagal");
+      toast.error(t("common.logoutFailed"));
     } finally {
       setIsLoggingOut(false);
     }
@@ -114,7 +119,9 @@ function Header() {
           </SheetContent>
         </Sheet>
 
-        <div className="flex items-center gap-4 ml-auto">
+        <div className="flex items-center gap-2 ml-auto">
+          <LanguageSwitcher />
+          <ThemeToggle />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative h-10 w-10 rounded-full">
@@ -139,7 +146,7 @@ function Header() {
               <DropdownMenuItem asChild>
                 <Link href="/settings">
                   <Settings className="mr-2 h-4 w-4" />
-                  Settings
+                  {t("navigation.settings")}
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
@@ -149,7 +156,7 @@ function Header() {
                 className="text-red-600"
               >
                 <LogOut className="mr-2 h-4 w-4" />
-                {isLoggingOut ? "Logging out..." : "Logout"}
+                {isLoggingOut ? t("common.loggingOut") : t("navigation.logout")}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

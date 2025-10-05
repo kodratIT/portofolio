@@ -23,6 +23,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
+import RichTextEditor from "@/components/common/RichTextEditor";
 import {
   Select,
   SelectContent,
@@ -254,15 +255,15 @@ export default function NewBlogPostPage() {
                   <FormItem>
                     <FormLabel>Content *</FormLabel>
                     <FormControl>
-                      <Textarea
+                      <RichTextEditor
+                        value={field.value}
+                        onChange={field.onChange}
                         placeholder="Write your blog post content here..."
-                        className="min-h-[300px]"
-                        {...field}
                         disabled={isSubmitting}
                       />
                     </FormControl>
                     <FormDescription>
-                      Full blog post content (supports markdown)
+                      Full blog post content with rich text formatting
                     </FormDescription>
                     <FormMessage />
                   </FormItem>

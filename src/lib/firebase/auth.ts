@@ -121,3 +121,39 @@ export const updateUserProfile = async (
     { merge: true }
   );
 };
+
+export const changePassword = async (
+  currentPassword: string,
+  newPassword: string
+): Promise<void> => {
+  try {
+    const user = auth.currentUser;
+    if (!user || !user.email) {
+      throw new Error("No authenticated user");
+    }
+
+    // Import needed for re-authentication
+    const { EmailAuthProvider, reauthenticateWithCredential, updatePassword } = await import("firebase/auth");
+
+    // Re-authenticate user
+    const credential = EmailAuthProvider.credential(user.email, currentPassword);
+    await reauthenticateWithCredential(user, credential);
+
+    // Update password
+    await updatePassword(user, newPassword);
+    
+    console.log("✅ Password changed successfully");
+  } catch (error: any) {
+    console.error("❌ Error changing password:", error);
+    
+    if (error.code === "auth/wrong-password") {
+      throw new Error("Current password is incorrect");
+    } else if (error.code === "auth/weak-password") {
+      throw new Error("New password is too weak");
+    } else if (error.code === "auth/requires-recent-login") {
+      throw new Error("Please log out and log in again before changing password");
+    }
+    
+    throw error;
+  }
+};

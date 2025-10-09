@@ -9,7 +9,7 @@ import {
 import { PORTFOLIO_CONFIG } from "@/lib/config/portfolio";
 import { Button } from "@/components/ui/button";
 import { BackgroundEffects } from "@/components/portfolio/background-effects";
-import { HeroSection } from "@/components/portfolio/hero-section";
+import { HeroUltra } from "@/components/portfolio/hero-ultra";
 import { TechStackFloat } from "@/components/portfolio/tech-stack-float";
 import { SkillsVisual } from "@/components/portfolio/skills-visual";
 import { ProjectsBento } from "@/components/portfolio/projects-bento";
@@ -57,15 +57,26 @@ export default async function Home() {
     bio: 'Welcome to my portfolio. I am a passionate developer building amazing things.',
     email: '',
     location: '',
-    avatar: '',
+    avatar: '/Kodrat.jpg',
     github: '',
     linkedin: '',
     twitter: '',
     website: '',
   };
 
-  const profile = userProfile || defaultProfile;
+  // Use userProfile if exists, otherwise use default, but always fallback to Kodrat.jpg for avatar
+  const profile = userProfile ? {
+    ...userProfile,
+    avatar: userProfile.avatar || '/Kodrat.jpg',
+  } : defaultProfile;
   const latestExperience = experiences[0];
+
+  // Calculate stats
+  const stats = {
+    yearsExperience: experiences.length > 0 ? experiences.length : 3,
+    projectsCompleted: projects.length,
+    technologiesCount: skills.length,
+  };
 
   return (
     <>
@@ -85,10 +96,11 @@ export default async function Home() {
           </div>
         )}
 
-        {/* Hero Section */}
-        <HeroSection 
+        {/* Hero Section - Ultra Modern */}
+        <HeroUltra 
           profile={profile} 
           latestPosition={latestExperience?.position}
+          stats={stats}
         />
 
         {/* Tech Stack Float */}

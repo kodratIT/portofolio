@@ -53,9 +53,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setUser(user);
+      
       if (user) {
+        // Set cookie for middleware
+        document.cookie = `userId=${user.uid}; path=/; max-age=${60 * 60 * 24 * 7}`; // 7 days
+        document.cookie = `authToken=authenticated; path=/; max-age=${60 * 60 * 24 * 7}`;
+        console.log('🍪 [Auth] Cookies set for user:', user.uid);
+        
         await fetchUserProfile(user.uid);
       } else {
+        // Clear cookies on logout
+        document.cookie = 'userId=; path=/; max-age=0';
+        document.cookie = 'authToken=; path=/; max-age=0';
+        console.log('🍪 [Auth] Cookies cleared');
+        
         setUserProfile(null);
       }
       setLoading(false);

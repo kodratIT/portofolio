@@ -29,8 +29,8 @@ export interface Project {
   githubUrl?: string;
   featured: boolean;
   order: number;
-  createdAt: Timestamp | Date;
-  updatedAt: Timestamp | Date;
+  createdAt: Timestamp | Date | string;
+  updatedAt: Timestamp | Date | string;
 }
 
 export interface Skill {
@@ -41,8 +41,8 @@ export interface Skill {
   level: number;
   icon?: string;
   order: number;
-  createdAt: Timestamp | Date;
-  updatedAt: Timestamp | Date;
+  createdAt: Timestamp | Date | string;
+  updatedAt: Timestamp | Date | string;
 }
 
 export interface Experience {
@@ -53,13 +53,13 @@ export interface Experience {
   description: string;
   responsibilities: string[];
   companyLogo?: string;
-  startDate?: Timestamp;
-  endDate?: Timestamp;
+  startDate?: Timestamp | string;
+  endDate?: Timestamp | string;
   current: boolean;
   location?: string;
   order: number;
-  createdAt?: Timestamp;
-  updatedAt?: Timestamp;
+  createdAt?: Timestamp | string;
+  updatedAt?: Timestamp | string;
 }
 
 export type SkillCategory =
@@ -91,10 +91,10 @@ export interface BlogPost {
   category: BlogCategory;
   tags: string[];
   published: boolean;
-  publishedAt?: Timestamp;
+  publishedAt?: Timestamp | string;
   featured: boolean;
   viewCount: number;
   order: number;
-  createdAt?: Timestamp;
-  updatedAt?: Timestamp;
+  createdAt?: Timestamp | string;
+  updatedAt?: Timestamp | string;
 }

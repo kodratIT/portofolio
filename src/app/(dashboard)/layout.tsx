@@ -12,6 +12,7 @@ import {
   LogOut,
   Menu,
   FileText,
+  ExternalLink,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -143,6 +144,12 @@ function Header() {
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <Link href={`/portfolio/${user?.uid}`} target="_blank">
+                  <ExternalLink className="mr-2 h-4 w-4" />
+                  View Portfolio
+                </Link>
+              </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link href="/settings">
                   <Settings className="mr-2 h-4 w-4" />

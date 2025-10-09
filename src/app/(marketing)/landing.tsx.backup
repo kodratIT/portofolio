@@ -1,0 +1,229 @@
+"use client";
+
+import Link from "next/link";
+import { useAuth } from "@/lib/hooks/useAuth";
+import { Spotlight } from "@/components/ui/aceternity/spotlight";
+import { TextGenerateEffect } from "@/components/ui/aceternity/text-generate-effect";
+import { BentoGrid, BentoGridItem } from "@/components/ui/aceternity/bento-grid";
+import { BackgroundGradient } from "@/components/ui/aceternity/background-gradient";
+import { Button as MovingBorderButton } from "@/components/ui/aceternity/moving-border";
+import { Button } from "@/components/ui/button";
+import {
+  Code2,
+  Palette,
+  Zap,
+  Layout,
+  Globe,
+  Shield,
+  Sparkles,
+  ArrowRight,
+} from "lucide-react";
+
+export default function Home() {
+  const { user } = useAuth();
+
+  const features = [
+    {
+      title: "Modern UI/UX",
+      description: "Beautiful, responsive designs with the latest UI trends and smooth animations",
+      icon: <Palette className="h-6 w-6 text-cyan-500" />,
+      className: "md:col-span-2",
+    },
+    {
+      title: "Blazing Fast",
+      description: "Optimized performance with Next.js 15 and cutting-edge technologies",
+      icon: <Zap className="h-6 w-6 text-yellow-500" />,
+      className: "md:col-span-1",
+    },
+    {
+      title: "Fully Responsive",
+      description: "Perfect experience across all devices - mobile, tablet, and desktop",
+      icon: <Layout className="h-6 w-6 text-purple-500" />,
+      className: "md:col-span-1",
+    },
+    {
+      title: "Rich Features",
+      description: "Blog, Projects, Skills, Experience management with Firebase integration",
+      icon: <Code2 className="h-6 w-6 text-blue-500" />,
+      className: "md:col-span-2",
+    },
+  ];
+
+  const highlights = [
+    {
+      icon: <Globe className="h-8 w-8 text-cyan-400" />,
+      title: "Multi-Language",
+      description: "Support for English & Indonesian with easy language switching",
+    },
+    {
+      icon: <Shield className="h-8 w-8 text-purple-400" />,
+      title: "Secure Auth",
+      description: "Firebase Authentication with Google SSO support",
+    },
+    {
+      icon: <Sparkles className="h-8 w-8 text-yellow-400" />,
+      title: "Dark Mode",
+      description: "Beautiful dark/light theme with smooth transitions",
+    },
+  ];
+
+  return (
+    <div className="w-full min-h-screen bg-black/[0.96] antialiased bg-grid-white/[0.02] relative overflow-hidden">
+      {/* Spotlight Effects */}
+      <Spotlight
+        className="-top-40 left-0 md:left-60 md:-top-20"
+        fill="white"
+      />
+      
+      {/* Hero Section */}
+      <div className="relative z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 md:pt-32 pb-20">
+          <div className="text-center">
+            <div className="inline-block mb-4">
+              <span className="px-4 py-2 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 text-white text-sm font-medium">
+                Welcome to Your Portfolio Dashboard
+              </span>
+            </div>
+            
+            <h1 className="text-4xl md:text-7xl font-bold bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 to-neutral-400 mb-6">
+              Build Your Perfect
+              <br />
+              Portfolio Website
+            </h1>
+            
+            <TextGenerateEffect
+              words="Create, manage, and showcase your projects, blog posts, skills, and experience with our powerful and beautiful portfolio management system."
+              className="text-center text-neutral-300 max-w-3xl mx-auto"
+            />
+
+            <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+              {user ? (
+                <Link href="/dashboard">
+                  <MovingBorderButton
+                    borderRadius="1.75rem"
+                    className="bg-white dark:bg-slate-900 text-black dark:text-white border-neutral-200 dark:border-slate-800"
+                  >
+                    Go to Dashboard
+                  </MovingBorderButton>
+                </Link>
+              ) : (
+                <>
+                  <Link href="/register">
+                    <MovingBorderButton
+                      borderRadius="1.75rem"
+                      className="bg-white dark:bg-slate-900 text-black dark:text-white border-neutral-200 dark:border-slate-800"
+                    >
+                      Get Started Free
+                    </MovingBorderButton>
+                  </Link>
+                  <Link href="/login">
+                    <Button
+                      variant="outline"
+                      size="lg"
+                      className="bg-transparent border-neutral-700 text-neutral-300 hover:bg-neutral-900 hover:text-white"
+                    >
+                      Sign In
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  </Link>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Features Section */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">
+              Powerful Features
+            </h2>
+            <p className="text-neutral-400 text-lg max-w-2xl mx-auto">
+              Everything you need to build and manage your professional portfolio
+            </p>
+          </div>
+
+          <BentoGrid className="max-w-6xl mx-auto">
+            {features.map((feature, i) => (
+              <BentoGridItem
+                key={i}
+                title={feature.title}
+                description={feature.description}
+                icon={feature.icon}
+                className={feature.className}
+              />
+            ))}
+          </BentoGrid>
+        </div>
+
+        {/* Highlights Section */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {highlights.map((item, i) => (
+              <BackgroundGradient
+                key={i}
+                className="rounded-[22px] p-8 bg-black"
+              >
+                <div className="flex flex-col items-center text-center">
+                  <div className="mb-4">{item.icon}</div>
+                  <h3 className="text-xl font-bold text-white mb-2">
+                    {item.title}
+                  </h3>
+                  <p className="text-neutral-400">{item.description}</p>
+                </div>
+              </BackgroundGradient>
+            ))}
+          </div>
+        </div>
+
+        {/* CTA Section */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+          <div className="relative rounded-3xl bg-gradient-to-r from-cyan-500/10 to-blue-500/10 border border-cyan-500/20 p-12 md:p-20 text-center overflow-hidden">
+            <div className="absolute inset-0 bg-grid-white/[0.02]" />
+            <div className="relative z-10">
+              <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">
+                Ready to Build Your Portfolio?
+              </h2>
+              <p className="text-neutral-300 text-lg mb-8 max-w-2xl mx-auto">
+                Join thousands of professionals showcasing their work with our platform
+              </p>
+              <Link href={user ? "/dashboard" : "/register"}>
+                <MovingBorderButton
+                  borderRadius="1.75rem"
+                  className="bg-white dark:bg-slate-900 text-black dark:text-white border-neutral-200 dark:border-slate-800"
+                >
+                  {user ? "Open Dashboard" : "Start Building Now"}
+                </MovingBorderButton>
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <footer className="border-t border-neutral-800 py-12">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+              <div className="text-neutral-400 text-sm">
+                © 2024 Portfolio Dashboard. Built with Next.js & Firebase.
+              </div>
+              <div className="flex gap-6">
+                <Link
+                  href="/login"
+                  className="text-neutral-400 hover:text-white transition-colors text-sm"
+                >
+                  Login
+                </Link>
+                <Link
+                  href="/register"
+                  className="text-neutral-400 hover:text-white transition-colors text-sm"
+                >
+                  Register
+                </Link>
+              </div>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </div>
+  );
+}

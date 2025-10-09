@@ -10,7 +10,7 @@ import { PORTFOLIO_CONFIG } from "@/lib/config/portfolio";
 import { Button } from "@/components/ui/button";
 import { BackgroundEffects } from "@/components/portfolio/background-effects";
 import { HeroUltra } from "@/components/portfolio/hero-ultra";
-import { TechStackFloat } from "@/components/portfolio/tech-stack-float";
+import { TechStackUltra } from "@/components/portfolio/tech-stack-ultra";
 import { SkillsVisual } from "@/components/portfolio/skills-visual";
 import { ProjectsBento } from "@/components/portfolio/projects-bento";
 import { ExperienceTimeline } from "@/components/portfolio/experience-timeline";
@@ -103,9 +103,9 @@ export default async function Home() {
           stats={stats}
         />
 
-        {/* Tech Stack Float */}
+        {/* Tech Stack Ultra */}
         {skills.length > 0 && (
-          <TechStackFloat skills={skills} />
+          <TechStackUltra skills={skills} />
         )}
 
         {/* Skills Visual */}
